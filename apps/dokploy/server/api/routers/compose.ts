@@ -166,6 +166,8 @@ export const composeRouter = createTRPCRouter({
 						return compose.bitbucket?.gitProviderId;
 					case "gitea":
 						return compose.gitea?.gitProviderId;
+					case "origin":
+						return compose.origin?.gitProviderId;
 					default:
 						return null;
 				}
@@ -753,6 +755,11 @@ export const composeRouter = createTRPCRouter({
 				giteaOwner: null,
 				giteaBranch: null,
 				giteaId: null,
+
+				originRepository: null,
+				originOwner: null,
+				originBranch: null,
+				originId: null,
 
 				customGitBranch: null,
 				customGitUrl: null,

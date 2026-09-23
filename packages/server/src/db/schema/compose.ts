@@ -18,6 +18,7 @@ import { environments } from "./environment";
 import { gitea } from "./gitea";
 import { github } from "./github";
 import { gitlab } from "./gitlab";
+import { origin } from "./origin";
 import { mounts } from "./mount";
 import { patch } from "./patch";
 import { schedules } from "./schedule";
@@ -36,6 +37,7 @@ export const sourceTypeCompose = pgEnum("sourceTypeCompose", [
 	"gitlab",
 	"bitbucket",
 	"gitea",
+	"origin",
 	"raw",
 ]);
 
@@ -76,6 +78,10 @@ export const compose = pgTable("compose", {
 	giteaRepository: text("giteaRepository"),
 	giteaOwner: text("giteaOwner"),
 	giteaBranch: text("giteaBranch"),
+	// Origin
+	originRepository: text("originRepository"),
+	originOwner: text("originOwner"),
+	originBranch: text("originBranch"),
 	// Git
 	customGitUrl: text("customGitUrl"),
 	customGitBranch: text("customGitBranch"),
@@ -120,6 +126,9 @@ export const compose = pgTable("compose", {
 	giteaId: text("giteaId").references(() => gitea.giteaId, {
 		onDelete: "set null",
 	}),
+	originId: text("originId").references(() => origin.originId, {
+		onDelete: "set null",
+	}),
 	serverId: text("serverId").references(() => server.serverId, {
 		onDelete: "cascade",
 	}),
@@ -162,6 +171,10 @@ export const composeRelations = relations(compose, ({ one, many }) => ({
 		fields: [compose.giteaId],
 		references: [gitea.giteaId],
 	}),
+	origin: one(origin, {
+		fields: [compose.originId],
+		references: [origin.originId],
+	}),
 	server: one(server, {
 		fields: [compose.serverId],
 		references: [server.serverId],
@@ -190,7 +203,7 @@ const createSchema = createInsertSchema(compose, {
 	composeType: z.enum(["docker-compose", "stack"]).optional(),
 	watchPaths: z.array(z.string()).optional(),
 	sourceType: z
-		.enum(["git", "github", "gitlab", "bitbucket", "gitea", "raw"])
+		.enum(["git", "github", "gitlab", "bitbucket", "gitea", "origin", "raw"])
 		.optional(),
 	triggerType: z.enum(["push", "tag"]).optional(),
 	composeStatus: z.enum(["idle", "running", "done", "error"]).optional(),

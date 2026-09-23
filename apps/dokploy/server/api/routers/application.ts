@@ -64,6 +64,7 @@ import {
 	apiSaveDockerProvider,
 	apiSaveEnvironmentVariables,
 	apiSaveGiteaProvider,
+	apiSaveOriginProvider,
 	apiSaveGithubProvider,
 	apiSaveGitlabProvider,
 	apiSaveGitProvider,
@@ -280,6 +281,8 @@ export const applicationRouter = createTRPCRouter({
 						return application.bitbucket?.gitProviderId;
 					case "gitea":
 						return application.gitea?.gitProviderId;
+					case "origin":
+						return application.origin?.gitProviderId;
 					default:
 						return null;
 				}
@@ -641,6 +644,32 @@ export const applicationRouter = createTRPCRouter({
 			});
 			return true;
 		}),
+	saveOriginProvider: protectedProcedure
+		.input(apiSaveOriginProvider)
+		.mutation(async ({ input, ctx }) => {
+			await checkServicePermissionAndAccess(ctx, input.applicationId, {
+				service: ["create"],
+			});
+			await updateApplication(input.applicationId, {
+				originRepository: input.originRepository,
+				originOwner: input.originOwner,
+				originBranch: input.originBranch,
+				originBuildPath: input.originBuildPath,
+				sourceType: "origin",
+				applicationStatus: "idle",
+				originId: input.originId,
+				watchPaths: input.watchPaths,
+				enableSubmodules: input.enableSubmodules,
+			});
+			const application = await findApplicationById(input.applicationId);
+			await audit(ctx, {
+				action: "update",
+				resourceType: "application",
+				resourceId: application.applicationId,
+				resourceName: application.appName,
+			});
+			return true;
+		}),
 	saveDockerProvider: protectedProcedure
 		.input(apiSaveDockerProvider)
 		.mutation(async ({ input, ctx }) => {
@@ -689,6 +718,32 @@ export const applicationRouter = createTRPCRouter({
 			});
 			return true;
 		}),
+	saveOriginProvider: protectedProcedure
+		.input(apiSaveOriginProvider)
+		.mutation(async ({ input, ctx }) => {
+			await checkServicePermissionAndAccess(ctx, input.applicationId, {
+				service: ["create"],
+			});
+			await updateApplication(input.applicationId, {
+				originRepository: input.originRepository,
+				originOwner: input.originOwner,
+				originBranch: input.originBranch,
+				originBuildPath: input.originBuildPath,
+				sourceType: "origin",
+				applicationStatus: "idle",
+				originId: input.originId,
+				watchPaths: input.watchPaths,
+				enableSubmodules: input.enableSubmodules,
+			});
+			const application = await findApplicationById(input.applicationId);
+			await audit(ctx, {
+				action: "update",
+				resourceType: "application",
+				resourceId: application.applicationId,
+				resourceName: application.appName,
+			});
+			return true;
+		}),
 	disconnectGitProvider: protectedProcedure
 		.input(apiFindOneApplication)
 		.mutation(async ({ input, ctx }) => {
@@ -722,6 +777,12 @@ export const applicationRouter = createTRPCRouter({
 				giteaBranch: null,
 				giteaBuildPath: null,
 				giteaId: null,
+
+				originRepository: null,
+				originOwner: null,
+				originBranch: null,
+				originBuildPath: null,
+				originId: null,
 
 				customGitBranch: null,
 				customGitBuildPath: null,

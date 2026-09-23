@@ -5,6 +5,7 @@ import {
 	GithubIcon,
 	GitIcon,
 	GitlabIcon,
+	OriginIcon,
 } from "@/components/icons/data-tools-icons";
 import { DialogAction } from "@/components/shared/dialog-action";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -30,6 +31,8 @@ export const UnauthorizedGitProvider = ({ service, onDisconnect }: Props) => {
 				return <BitbucketIcon className="size-5 text-muted-foreground" />;
 			case "gitea":
 				return <GiteaIcon className="size-5 text-muted-foreground" />;
+			case "origin":
+				return <OriginIcon className="size-5 text-muted-foreground" />;
 			case "git":
 				return <GitIcon className="size-5 text-muted-foreground" />;
 			default:
@@ -62,6 +65,12 @@ export const UnauthorizedGitProvider = ({ service, onDisconnect }: Props) => {
 					repo: service.giteaRepository,
 					branch: service.giteaBranch,
 					owner: service.giteaOwner,
+				};
+			case "origin":
+				return {
+					repo: service.originRepository,
+					branch: service.originBranch,
+					owner: service.originOwner,
 				};
 			case "git":
 				return {

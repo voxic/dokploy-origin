@@ -134,7 +134,7 @@ pnpm --filter=dokploy run reset-password user@example.com
 
 Both commands print the new randomly generated password to the console.
 
-If you want to test the webhooks on development mode using localtunnel, make sure to install [`localtunnel`](https://localtunnel.app/)
+If you want to test the webhooks on development mode using localtunnel, make sure to install [`localtunnel`](https://localtunnel.app/). Origin install/webhooks still require HTTPS (see `docs/origin-git-provider.md`).
 
 ```bash
 pnpm dlx localtunnel --port 3000

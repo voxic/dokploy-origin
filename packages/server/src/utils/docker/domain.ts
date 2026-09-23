@@ -14,6 +14,7 @@ import { cloneGitRepository } from "../providers/git";
 import { cloneGiteaRepository } from "../providers/gitea";
 import { cloneGithubRepository } from "../providers/github";
 import { cloneGitlabRepository } from "../providers/gitlab";
+import { cloneOriginRepository } from "../providers/origin";
 import { getCreateComposeFileCommand } from "../providers/raw";
 import { randomizeDeployableSpecificationFile } from "./collision";
 import { randomizeSpecificationFile } from "./compose";
@@ -40,6 +41,8 @@ export const cloneCompose = async (compose: Compose) => {
 		command += await cloneGitRepository(entity);
 	} else if (compose.sourceType === "gitea") {
 		command += await cloneGiteaRepository(entity);
+	} else if (compose.sourceType === "origin") {
+		command += await cloneOriginRepository(entity);
 	} else if (compose.sourceType === "raw") {
 		command += getCreateComposeFileCommand(compose);
 	}

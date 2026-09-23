@@ -19,6 +19,7 @@ import { environments } from "./environment";
 import { gitea } from "./gitea";
 import { github } from "./github";
 import { gitlab } from "./gitlab";
+import { origin } from "./origin";
 import { mounts } from "./mount";
 import { patch } from "./patch";
 import { ports } from "./port";
@@ -64,6 +65,7 @@ export const sourceType = pgEnum("sourceType", [
 	"gitlab",
 	"bitbucket",
 	"gitea",
+	"origin",
 	"drop",
 ]);
 
@@ -144,6 +146,11 @@ export const applications = pgTable("application", {
 	giteaOwner: text("giteaOwner"),
 	giteaBranch: text("giteaBranch"),
 	giteaBuildPath: text("giteaBuildPath").default("/"),
+	// Origin
+	originRepository: text("originRepository"),
+	originOwner: text("originOwner"),
+	originBranch: text("originBranch"),
+	originBuildPath: text("originBuildPath").default("/"),
 	// Bitbucket
 	bitbucketRepository: text("bitbucketRepository"),
 	bitbucketRepositorySlug: text("bitbucketRepositorySlug"),
@@ -218,6 +225,9 @@ export const applications = pgTable("application", {
 	giteaId: text("giteaId").references(() => gitea.giteaId, {
 		onDelete: "set null",
 	}),
+	originId: text("originId").references(() => origin.originId, {
+		onDelete: "set null",
+	}),
 	bitbucketId: text("bitbucketId").references(() => bitbucket.bitbucketId, {
 		onDelete: "set null",
 	}),
@@ -272,6 +282,10 @@ export const applicationsRelations = relations(
 		gitea: one(gitea, {
 			fields: [applications.giteaId],
 			references: [gitea.giteaId],
+		}),
+		origin: one(origin, {
+			fields: [applications.originId],
+			references: [origin.originId],
 		}),
 		bitbucket: one(bitbucket, {
 			fields: [applications.bitbucketId],
@@ -340,7 +354,16 @@ const createSchema = createInsertSchema(applications, {
 	buildPath: z.string().optional(),
 	environmentId: z.string(),
 	sourceType: z
-		.enum(["github", "docker", "git", "gitlab", "bitbucket", "gitea", "drop"])
+		.enum([
+			"github",
+			"docker",
+			"git",
+			"gitlab",
+			"bitbucket",
+			"gitea",
+			"origin",
+			"drop",
+		])
 		.optional(),
 	triggerType: z.enum(["push", "tag"]).optional(),
 	applicationStatus: z.enum(["idle", "running", "done", "error"]),
@@ -503,6 +526,18 @@ export const apiSaveGiteaProvider = createSchema
 	})
 	.required()
 	.extend({ giteaBranch: branchField })
+	.merge(createSchema.pick({ enableSubmodules: true, watchPaths: true }));
+
+export const apiSaveOriginProvider = createSchema
+	.pick({
+		applicationId: true,
+		originBuildPath: true,
+		originOwner: true,
+		originRepository: true,
+		originId: true,
+	})
+	.required()
+	.extend({ originBranch: branchField })
 	.merge(createSchema.pick({ enableSubmodules: true, watchPaths: true }));
 
 export const apiSaveDockerProvider = createSchema

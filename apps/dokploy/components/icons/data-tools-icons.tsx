@@ -337,6 +337,32 @@ export const GiteaIcon = ({ className }: Props) => {
 	);
 };
 
+export const OriginIcon = ({ className }: Props) => {
+	return (
+		<svg
+			aria-label="origin"
+			viewBox="0 0 18 18"
+			width="18"
+			height="18"
+			xmlns="http://www.w3.org/2000/svg"
+			className={className}
+		>
+			<circle cx="9" cy="9" r="8" fill="#f54e00" />
+			<text
+				x="9"
+				y="13"
+				textAnchor="middle"
+				fill="white"
+				fontSize="10"
+				fontFamily="sans-serif"
+				fontWeight="700"
+			>
+				O
+			</text>
+		</svg>
+	);
+};
+
 export const DockerIcon = ({ className }: Props) => {
 	return (
 		<svg

@@ -35,6 +35,7 @@ export const gitProviderRouter = createTRPCRouter({
 				bitbucket: true,
 				github: true,
 				gitea: true,
+				origin: true,
 			},
 			orderBy: desc(gitProvider.createdAt),
 			where: inArray(gitProvider.gitProviderId, [...accessibleIds]),
@@ -79,6 +80,18 @@ export const gitProviderRouter = createTRPCRouter({
 						giteaUrl: r.gitea.giteaUrl,
 						clientId: r.gitea.clientId,
 						isConfigured: !!(r.gitea.accessToken && r.gitea.refreshToken),
+					}
+				: null,
+			origin: r.origin
+				? {
+						originId: r.origin.originId,
+						originAppId: r.origin.originAppId,
+						originInstallationId: r.origin.originInstallationId,
+						isConfigured: !!(
+							r.origin.originPrivateKey &&
+							r.origin.originAppId &&
+							r.origin.originInstallationId
+						),
 					}
 				: null,
 		}));

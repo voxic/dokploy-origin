@@ -6,6 +6,7 @@ import { SaveDockerProvider } from "@/components/dashboard/application/general/g
 import { SaveGitProvider } from "@/components/dashboard/application/general/generic/save-git-provider";
 import { SaveGiteaProvider } from "@/components/dashboard/application/general/generic/save-gitea-provider";
 import { SaveGithubProvider } from "@/components/dashboard/application/general/generic/save-github-provider";
+import { SaveOriginProvider } from "@/components/dashboard/application/general/generic/save-origin-provider";
 import {
 	BitbucketIcon,
 	DockerIcon,
@@ -13,6 +14,7 @@ import {
 	GithubIcon,
 	GitIcon,
 	GitlabIcon,
+	OriginIcon,
 } from "@/components/icons/data-tools-icons";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -29,7 +31,8 @@ type TabState =
 	| "drop"
 	| "gitlab"
 	| "bitbucket"
-	| "gitea";
+	| "gitea"
+	| "origin";
 
 interface Props {
 	applicationId: string;
@@ -44,6 +47,8 @@ export const ShowProviderForm = ({ applicationId }: Props) => {
 		api.bitbucket.bitbucketProviders.useQuery();
 	const { data: giteaProviders, isPending: isLoadingGitea } =
 		api.gitea.giteaProviders.useQuery();
+	const { data: originProviders, isPending: isLoadingOrigin } =
+		api.origin.originProviders.useQuery();
 
 	const { data: application, refetch } = api.application.one.useQuery({
 		applicationId,
@@ -54,7 +59,11 @@ export const ShowProviderForm = ({ applicationId }: Props) => {
 	const [tab, setSab] = useState<TabState>(application?.sourceType || "github");
 
 	const isLoading =
-		isLoadingGithub || isLoadingGitlab || isLoadingBitbucket || isLoadingGitea;
+		isLoadingGithub ||
+		isLoadingGitlab ||
+		isLoadingBitbucket ||
+		isLoadingGitea ||
+		isLoadingOrigin;
 
 	const handleDisconnect = async () => {
 		try {
@@ -187,6 +196,13 @@ export const ShowProviderForm = ({ applicationId }: Props) => {
 								Gitea
 							</TabsTrigger>
 							<TabsTrigger
+								value="origin"
+								className="rounded-none border-b-2 gap-2 border-b-transparent data-[state=active]:border-b-2 data-[state=active]:border-b-border"
+							>
+								<OriginIcon className="size-4 text-current fill-current" />
+								Origin
+							</TabsTrigger>
+							<TabsTrigger
 								value="docker"
 								className="rounded-none border-b-2 gap-2 border-b-transparent data-[state=active]:border-b-2 data-[state=active]:border-b-border"
 							>
@@ -278,6 +294,26 @@ export const ShowProviderForm = ({ applicationId }: Props) => {
 								<GiteaIcon className="size-8 text-muted-foreground" />
 								<span className="text-base text-muted-foreground">
 									To deploy using Gitea, you need to configure your account
+									first. Please, go to{" "}
+									<Link
+										href="/dashboard/settings/git-providers"
+										className="text-foreground"
+									>
+										Settings
+									</Link>{" "}
+									to do so.
+								</span>
+							</div>
+						)}
+					</TabsContent>
+					<TabsContent value="origin" className="w-full p-2">
+						{originProviders && originProviders?.length > 0 ? (
+							<SaveOriginProvider applicationId={applicationId} />
+						) : (
+							<div className="flex flex-col items-center gap-3 min-h-[25vh] justify-center">
+								<OriginIcon className="size-8 text-muted-foreground" />
+								<span className="text-base text-muted-foreground">
+									To deploy using Origin, you need to configure your account
 									first. Please, go to{" "}
 									<Link
 										href="/dashboard/settings/git-providers"
