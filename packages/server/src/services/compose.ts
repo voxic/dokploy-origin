@@ -30,6 +30,7 @@ import {
 import { cloneGiteaRepository } from "@dokploy/server/utils/providers/gitea";
 import { cloneGithubRepository } from "@dokploy/server/utils/providers/github";
 import { cloneGitlabRepository } from "@dokploy/server/utils/providers/gitlab";
+import { cloneOriginRepository } from "@dokploy/server/utils/providers/origin";
 import { getCreateComposeFileCommand } from "@dokploy/server/utils/providers/raw";
 import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
@@ -141,6 +142,11 @@ export const findComposeById = async (composeId: string) => {
 					clientSecret: false,
 					accessToken: false,
 					refreshToken: false,
+				},
+			},
+			origin: {
+				columns: {
+					originPrivateKey: false,
 				},
 			},
 			server: true,
@@ -263,6 +269,8 @@ export const deployCompose = async ({
 			command += await cloneGitRepository(entity);
 		} else if (compose.sourceType === "gitea") {
 			command += await cloneGiteaRepository(entity);
+		} else if (compose.sourceType === "origin") {
+			command += await cloneOriginRepository(entity);
 		} else if (compose.sourceType === "raw") {
 			command += getCreateComposeFileCommand(entity);
 		}

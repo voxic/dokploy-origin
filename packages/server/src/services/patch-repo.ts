@@ -8,6 +8,7 @@ import { cloneGitRepository } from "../utils/providers/git";
 import { cloneGiteaRepository } from "../utils/providers/gitea";
 import { cloneGithubRepository } from "../utils/providers/github";
 import { cloneGitlabRepository } from "../utils/providers/gitlab";
+import { cloneOriginRepository } from "../utils/providers/origin";
 import { findApplicationById } from "./application";
 import { findComposeById } from "./compose";
 
@@ -56,6 +57,8 @@ export const ensurePatchRepo = async ({
 		command += await cloneGitlabRepository(applicationEntity);
 	} else if (application.sourceType === "gitea") {
 		command += await cloneGiteaRepository(applicationEntity);
+	} else if (application.sourceType === "origin") {
+		command += await cloneOriginRepository(applicationEntity);
 	} else if (application.sourceType === "bitbucket") {
 		command += await cloneBitbucketRepository(applicationEntity);
 	} else if (application.sourceType === "git") {

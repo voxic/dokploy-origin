@@ -7,6 +7,7 @@ import { bitbucket } from "./bitbucket";
 import { gitea } from "./gitea";
 import { github } from "./github";
 import { gitlab } from "./gitlab";
+import { origin } from "./origin";
 import { user } from "./user";
 
 export const gitProviderType = pgEnum("gitProviderType", [
@@ -14,6 +15,7 @@ export const gitProviderType = pgEnum("gitProviderType", [
 	"gitlab",
 	"bitbucket",
 	"gitea",
+	"origin",
 ]);
 
 export const gitProvider = pgTable("git_provider", {
@@ -53,6 +55,10 @@ export const gitProviderRelations = relations(gitProvider, ({ one }) => ({
 	gitea: one(gitea, {
 		fields: [gitProvider.gitProviderId],
 		references: [gitea.gitProviderId],
+	}),
+	origin: one(origin, {
+		fields: [gitProvider.gitProviderId],
+		references: [origin.gitProviderId],
 	}),
 	organization: one(organization, {
 		fields: [gitProvider.organizationId],

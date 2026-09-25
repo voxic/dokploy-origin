@@ -14,6 +14,7 @@ import {
 	GiteaIcon,
 	GithubIcon,
 	GitlabIcon,
+	OriginIcon,
 } from "@/components/icons/data-tools-icons";
 import { DialogAction } from "@/components/shared/dialog-action";
 import { Badge } from "@/components/ui/badge";
@@ -43,6 +44,8 @@ import { AddGithubProvider } from "./github/add-github-provider";
 import { EditGithubProvider } from "./github/edit-github-provider";
 import { AddGitlabProvider } from "./gitlab/add-gitlab-provider";
 import { EditGitlabProvider } from "./gitlab/edit-gitlab-provider";
+import { AddOriginProvider } from "./origin/add-origin-provider";
+import { EditOriginProvider } from "./origin/edit-origin-provider";
 
 export const ShowGitProviders = () => {
 	const { data, isPending, refetch } = api.gitProvider.getAll.useQuery();
@@ -102,6 +105,7 @@ export const ShowGitProviders = () => {
 														<AddGitlabProvider />
 														<AddBitbucketProvider />
 														<AddGiteaProvider />
+														<AddOriginProvider />
 													</div>
 												</div>
 											</div>
@@ -120,6 +124,7 @@ export const ShowGitProviders = () => {
 														<AddGitlabProvider />
 														<AddBitbucketProvider />
 														<AddGiteaProvider />
+														<AddOriginProvider />
 													</div>
 												</div>
 											)}
@@ -132,6 +137,7 @@ export const ShowGitProviders = () => {
 												const isBitbucket =
 													gitProvider.providerType === "bitbucket";
 												const isGitea = gitProvider.providerType === "gitea";
+												const isOrigin = gitProvider.providerType === "origin";
 												const canManage = gitProvider.isOwner || isOrgAdmin;
 
 												const haveGithubRequirements =
@@ -139,6 +145,9 @@ export const ShowGitProviders = () => {
 
 												const haveGitlabRequirements =
 													isGitlab && gitProvider.gitlab?.isConfigured;
+
+												const haveOriginRequirements =
+													isOrigin && gitProvider.origin?.isConfigured;
 
 												return (
 													<div
@@ -158,6 +167,9 @@ export const ShowGitProviders = () => {
 																		<BitbucketIcon className="size-5" />
 																	)}
 																	{isGitea && <GiteaIcon className="size-5" />}
+																	{isOrigin && (
+																		<OriginIcon className="size-5" />
+																	)}
 																	<div className="flex flex-col gap-1">
 																		<span className="text-sm font-medium">
 																			{gitProvider.name}
@@ -271,6 +283,15 @@ export const ShowGitProviders = () => {
 																		</Link>
 																	</div>
 																)}
+																{!haveOriginRequirements && isOrigin && (
+																	<Badge
+																		variant="outline"
+																		className="text-xs"
+																	>
+																		Action Required
+																	</Badge>
+																)}
+
 																{!haveGitlabRequirements && isGitlab && (
 																	<div className="flex flex-row gap-1 items-center">
 																		<Badge
@@ -327,6 +348,15 @@ export const ShowGitProviders = () => {
 																				giteaId={gitProvider.gitea.giteaId}
 																			/>
 																		)}
+
+																		{isOrigin &&
+																			gitProvider.origin?.originId && (
+																				<EditOriginProvider
+																					originId={
+																						gitProvider.origin.originId
+																					}
+																				/>
+																			)}
 
 																		<DialogAction
 																			title="Delete Git Provider"

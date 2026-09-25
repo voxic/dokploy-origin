@@ -54,6 +54,7 @@ async function generateOpenAPI() {
 				"github",
 				"gitlab",
 				"gitea",
+				"origin",
 				"server",
 				"swarm",
 				"ai",

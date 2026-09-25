@@ -26,6 +26,7 @@ import {
 import { cloneGiteaRepository } from "@dokploy/server/utils/providers/gitea";
 import { cloneGithubRepository } from "@dokploy/server/utils/providers/github";
 import { cloneGitlabRepository } from "@dokploy/server/utils/providers/gitlab";
+import { cloneOriginRepository } from "@dokploy/server/utils/providers/origin";
 import { createTraefikConfig } from "@dokploy/server/utils/traefik/application";
 import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
@@ -120,6 +121,11 @@ export const findApplicationById = async (applicationId: string) => {
 					refreshToken: false,
 				},
 			},
+			origin: {
+				columns: {
+					originPrivateKey: false,
+				},
+			},
 			server: true,
 			previewDeployments: true,
 			registry: { columns: { password: false } },
@@ -206,6 +212,8 @@ export const deployApplication = async ({
 			command += await cloneGitlabRepository(applicationEntity);
 		} else if (application.sourceType === "gitea") {
 			command += await cloneGiteaRepository(applicationEntity);
+		} else if (application.sourceType === "origin") {
+			command += await cloneOriginRepository(applicationEntity);
 		} else if (application.sourceType === "bitbucket") {
 			command += await cloneBitbucketRepository(applicationEntity);
 		} else if (application.sourceType === "git") {
