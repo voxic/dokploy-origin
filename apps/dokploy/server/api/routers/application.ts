@@ -64,10 +64,10 @@ import {
 	apiSaveDockerProvider,
 	apiSaveEnvironmentVariables,
 	apiSaveGiteaProvider,
-	apiSaveOriginProvider,
 	apiSaveGithubProvider,
 	apiSaveGitlabProvider,
 	apiSaveGitProvider,
+	apiSaveOriginProvider,
 	apiUpdateApplication,
 	applications,
 	environments,
@@ -706,32 +706,6 @@ export const applicationRouter = createTRPCRouter({
 				customGitSSHKeyId: input.customGitSSHKeyId,
 				sourceType: "git",
 				applicationStatus: "idle",
-				watchPaths: input.watchPaths,
-				enableSubmodules: input.enableSubmodules,
-			});
-			const application = await findApplicationById(input.applicationId);
-			await audit(ctx, {
-				action: "update",
-				resourceType: "application",
-				resourceId: application.applicationId,
-				resourceName: application.appName,
-			});
-			return true;
-		}),
-	saveOriginProvider: protectedProcedure
-		.input(apiSaveOriginProvider)
-		.mutation(async ({ input, ctx }) => {
-			await checkServicePermissionAndAccess(ctx, input.applicationId, {
-				service: ["create"],
-			});
-			await updateApplication(input.applicationId, {
-				originRepository: input.originRepository,
-				originOwner: input.originOwner,
-				originBranch: input.originBranch,
-				originBuildPath: input.originBuildPath,
-				sourceType: "origin",
-				applicationStatus: "idle",
-				originId: input.originId,
 				watchPaths: input.watchPaths,
 				enableSubmodules: input.enableSubmodules,
 			});

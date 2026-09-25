@@ -1,3 +1,4 @@
+import type { OriginRepository } from "@dokploy/server";
 import { VALID_BRANCH_REGEX } from "@dokploy/server/utils/git-branch-validation";
 import { standardSchemaResolver as zodResolver } from "@hookform/resolvers/standard-schema";
 import { CheckIcon, ChevronsUpDown, HelpCircle, Plus, X } from "lucide-react";
@@ -48,7 +49,6 @@ import {
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { api } from "@/utils/api";
-import type { Repository } from "@/utils/origin-utils";
 
 const OriginProviderSchema = z.object({
 	composePath: z.string().min(1),
@@ -103,7 +103,7 @@ export const SaveOriginProviderCompose = ({ composeId }: Props) => {
 		data: repositories,
 		isLoading: isLoadingRepositories,
 		error,
-	} = api.origin.getOriginRepositories.useQuery<Repository[]>(
+	} = api.origin.getOriginRepositories.useQuery<OriginRepository[]>(
 		{
 			originId,
 		},
@@ -281,7 +281,7 @@ export const SaveOriginProviderCompose = ({ composeId }: Props) => {
 													<CommandGroup>
 														{repositories?.map((repo) => (
 															<CommandItem
-																key={repo.url}
+																key={repo.id}
 																value={`${repo.owner.slug}/${repo.name}`}
 																onSelect={() => {
 																	form.setValue("repository", {

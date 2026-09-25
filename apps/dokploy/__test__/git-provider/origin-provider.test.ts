@@ -36,6 +36,9 @@ describe("Origin Git provider", () => {
 		const keys = generateOriginKeypair();
 		const jwt = mintOriginAppJwt("app_01test", keys.privateKey);
 		const [headerB64, payloadB64, signatureB64] = jwt.split(".");
+		if (!headerB64 || !payloadB64 || !signatureB64) {
+			throw new Error("Expected a three-part JWT");
+		}
 		const header = JSON.parse(Buffer.from(headerB64, "base64url").toString());
 		const payload = JSON.parse(Buffer.from(payloadB64, "base64url").toString());
 		expect(header.alg).toBe("EdDSA");
@@ -179,8 +182,10 @@ describe("Origin webhook signature", () => {
 describe("Origin installation receipt", () => {
 	it("verifies EdDSA receipt claims", async () => {
 		const { publicKey, privateKey } = generateKeyPairSync("ed25519");
-		const jwk = publicKey.export({ format: "jwk" }) as JsonWebKey;
-		jwk.kid = "origin-key-id";
+		const jwk = {
+			...publicKey.export({ format: "jwk" }),
+			kid: "origin-key-id",
+		} as JsonWebKey;
 		const header = {
 			alg: "EdDSA",
 			kid: "origin-key-id",

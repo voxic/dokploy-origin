@@ -1,3 +1,4 @@
+import type { OriginRepository } from "@dokploy/server";
 import { VALID_BRANCH_REGEX } from "@dokploy/server/utils/git-branch-validation";
 import { standardSchemaResolver as zodResolver } from "@hookform/resolvers/standard-schema";
 import { CheckIcon, ChevronsUpDown, HelpCircle, Plus, X } from "lucide-react";
@@ -48,14 +49,6 @@ import {
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { api } from "@/utils/api";
-
-interface OriginRepository {
-	name: string;
-	id: string;
-	owner: {
-		slug: string;
-	};
-}
 
 interface OriginBranch {
 	name: string;
@@ -302,7 +295,7 @@ export const SaveOriginProvider = ({ applicationId }: Props) => {
 															return (
 																<CommandItem
 																	value={`${repo.owner.slug}/${repo.name}`}
-																	key={repo.url}
+																	key={repo.id}
 																	onSelect={() => {
 																		form.setValue("repository", {
 																			owner: repo.owner.slug as string,
@@ -401,7 +394,7 @@ export const SaveOriginProvider = ({ applicationId }: Props) => {
 														{branches?.map((branch: OriginBranch) => (
 															<CommandItem
 																value={branch.name}
-																key={branch.commit.id}
+																key={branch.name}
 																onSelect={() => {
 																	form.setValue("branch", branch.name);
 																}}
